@@ -17,17 +17,23 @@
 package uk.gov.hmrc.platformstatusbackend.controllers
 
 import javax.inject.{Inject, Singleton}
+import play.api.libs.concurrent.Futures
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.platformstatusbackend.config.AppConfig
+import uk.gov.hmrc.platformstatusbackend.services.StatusChecker
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import play.api.libs.json.Json.toJson
+import play.api.libs.json._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class MicroserviceHelloWorldController @Inject()(appConfig: AppConfig, cc: ControllerComponents)
+class MongoWriteController @Inject()(appConfig: AppConfig, cc: ControllerComponents, statusChecker: StatusChecker)(implicit executionContext: ExecutionContext, futures: Futures)
     extends BackendController(cc) {
 
-  def hello(): Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok("Hello world"))
+  def iteration3(): Action[AnyContent] = Action.async { implicit request =>
+    for {
+      status <- statusChecker.iteration3Status(appConfig.dbUrl)
+    } yield Ok(toJson(status))
   }
 }

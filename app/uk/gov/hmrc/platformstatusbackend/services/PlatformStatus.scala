@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.platformstatusbackend.config
+package uk.gov.hmrc.platformstatusbackend.services
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.json.{Json, OFormat}
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
-  val dbUrl = servicesConfig.getString("mongodb.uri")
+case class PlatformStatus(name: String,
+                          isWorking: Boolean,
+                          description: String,
+                          reason: Option[String] = None) {
+
+}
+
+object PlatformStatus {
+  implicit val mongoFormat: OFormat[PlatformStatus] = Json.format[PlatformStatus]
 }
