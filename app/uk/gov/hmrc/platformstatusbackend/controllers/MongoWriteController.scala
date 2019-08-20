@@ -28,12 +28,12 @@ import play.api.libs.json._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class MongoWriteController @Inject()(appConfig: AppConfig, cc: ControllerComponents, statusChecker: StatusChecker)(implicit executionContext: ExecutionContext, futures: Futures)
+class MongoWriteController @Inject()(cc: ControllerComponents, statusChecker: StatusChecker)(implicit executionContext: ExecutionContext, futures: Futures)
     extends BackendController(cc) {
 
   def iteration3(): Action[AnyContent] = Action.async { implicit request =>
     for {
-      status <- statusChecker.iteration3Status(appConfig.dbUrl)
+      status <- statusChecker.iteration3Status()
     } yield Ok(toJson(status))
   }
 }
