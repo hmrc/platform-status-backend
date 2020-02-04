@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.platformstatusbackend.services
 
+import java.time.temporal.ChronoUnit
+import java.time.{LocalDateTime, ZoneOffset}
+
 import com.google.inject.Inject
 import javax.inject.Singleton
 import org.mongodb.scala._
@@ -24,15 +27,18 @@ import org.mongodb.scala.model.ReplaceOptions
 import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.libs.concurrent.{Futures, Timeout}
+import play.api.libs.concurrent.Futures
 import play.api.libs.concurrent.Futures._
+import play.api.libs.json.{JsError, Json, Reads}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.platformstatusbackend.config.AppConfig
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.duration._
 
 
 @Singleton
-class StatusChecker @Inject()(appConfig: AppConfig) {
+class StatusChecker @Inject()(http: HttpClient, appConfig: AppConfig) {
 
   val logger = Logger(this.getClass)
 
@@ -49,19 +55,26 @@ class StatusChecker @Inject()(appConfig: AppConfig) {
   def iteration3Status()(implicit executionContext: ExecutionContext, futures: Futures): Future[PlatformStatus] = {
     try {
       checkMongoConnection(appConfig.dbUrl).withTimeout(2.seconds).recoverWith {
-        case ex: Exception => {
-          logger.warn("Failed to connect to Mongo")
-          Future(baseIteration3Status.copy(isWorking = false, reason = Some(ex.getMessage)))
-        }
+        case ex: Exception =>
+          logger.warn("Failed to connect to Mongo", ex)
+          genericError(baseIteration3Status, ex)
       }
     } catch {
-      case ex: Exception => Future(baseIteration3Status.copy(isWorking = false, reason = Some(ex.getMessage)))
+      case ex: Exception => genericError(baseIteration3Status, ex)
     }
   }
 
-  def iteration5Status() = baseIteration5Status.copy(isWorking = false, reason = Some("Test not yet implemented"))
-
-
+  def iteration5Status()(implicit executionContext: ExecutionContext, futures: Futures, hc: HeaderCarrier): Future[PlatformStatus] = {
+    try {
+      checkDesHealthcheck(appConfig).withTimeout(2.seconds).recoverWith {
+        case ex: Exception =>
+          logger.warn("Failed to connect to Des Healthcheck", ex)
+          genericError(baseIteration5Status, ex)
+      }
+    } catch {
+      case ex: Exception => genericError(baseIteration5Status, ex)
+    }
+  }
 
   private def checkMongoConnection(dbUrl: String)(implicit executionContext: ExecutionContext, futures: Futures): Future[PlatformStatus] = {
     val mongoClient: MongoClient = MongoClient(dbUrl)
@@ -76,4 +89,31 @@ class StatusChecker @Inject()(appConfig: AppConfig) {
     } yield result
   }
 
+  private def checkDesHealthcheck(appConfig: AppConfig)(implicit executionContext: ExecutionContext, futures: Futures, hc: HeaderCarrier): Future[PlatformStatus] = {
+    val requestTimestamp = LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS).toString
+    val headers = Seq(
+      "Authorization" -> s"Bearer ${appConfig.desAuthToken}",
+      "Environment" -> appConfig.desEndpoint,
+      "requestTimestamp" -> requestTimestamp
+    )
+
+    http.doGet(s"${appConfig.desEndpoint}/health-check-des", headers) map { response =>
+      response.status match {
+        case 200 =>
+          logger.info("Successful DES health-check: " + response.json.toString())
+          baseIteration5Status
+        case x =>
+          val reasons =
+            List(s"statusCode: $x") ++
+            response.header("CorrelationId").map(id => s"CorrelationId: $id") ++
+            List(s"body: ${response.body}")
+          logger.warn("Unsuccessful DES health-check: " + reasons.mkString(","))
+          baseIteration5Status.copy(isWorking = false)
+      }
+    }
+  }
+
+  private def genericError(status: PlatformStatus, ex: Exception)(implicit executionContext: ExecutionContext): Future[PlatformStatus] = {
+    Future(status.copy(isWorking = false, reason = Some(ex.getMessage)))
+  }
 }
