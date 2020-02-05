@@ -16,8 +16,7 @@
 
 package uk.gov.hmrc.platformstatusbackend.services
 
-import java.time.temporal.ChronoUnit
-import java.time.{LocalDateTime, ZoneOffset}
+import java.time.Instant
 
 import com.google.inject.Inject
 import javax.inject.Singleton
@@ -25,16 +24,14 @@ import org.mongodb.scala._
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.ReplaceOptions
 import play.api.Logger
-
-import scala.concurrent.{ExecutionContext, Future}
 import play.api.libs.concurrent.Futures
 import play.api.libs.concurrent.Futures._
-import play.api.libs.json.{JsError, Json, Reads}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.platformstatusbackend.config.AppConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
@@ -90,7 +87,7 @@ class StatusChecker @Inject()(http: HttpClient, appConfig: AppConfig) {
   }
 
   private def checkDesHealthcheck(appConfig: AppConfig)(implicit executionContext: ExecutionContext, futures: Futures, hc: HeaderCarrier): Future[PlatformStatus] = {
-    val requestTimestamp = LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS).toString
+    val requestTimestamp = Instant.now().toString
     val headers = Seq(
       "Authorization" -> s"Bearer ${appConfig.desAuthToken}",
       "Environment" -> appConfig.desEndpoint,
