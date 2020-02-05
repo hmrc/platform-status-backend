@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,4 +25,8 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
   val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
   val dbUrl = servicesConfig.getString("mongodb.uri")
+
+  val desEndpoint: String = config.get[String]("microservice.services.des.host")
+  val desAuthToken: String = config.get[String]("microservice.services.des.authorization-token")
+  val desEnvironment: String = config.get[String]("microservice.services.des.environment")
 }
