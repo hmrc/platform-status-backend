@@ -90,11 +90,11 @@ class StatusChecker @Inject()(http: HttpClient, appConfig: AppConfig) {
     val requestTimestamp = Instant.now().toString
     val headers = Seq(
       "Authorization" -> s"Bearer ${appConfig.desAuthToken}",
-      "Environment" -> appConfig.desEndpoint,
+      "Environment" -> appConfig.desEnvironment,
       "requestTimestamp" -> requestTimestamp
     )
 
-    http.doGet(s"${appConfig.desEndpoint}/health-check-des", headers) map { response =>
+    http.doGet(s"${appConfig.desBaseUrl}/health-check-des", headers) map { response =>
       response.status match {
         case 200 =>
           logger.info("Successful DES health-check: " + response.json.toString())
