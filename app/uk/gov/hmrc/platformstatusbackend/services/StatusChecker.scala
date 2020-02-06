@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.platformstatusbackend.services
 
-import java.time.Instant
-
 import com.google.inject.Inject
 import javax.inject.Singleton
 import org.mongodb.scala._
@@ -87,11 +85,9 @@ class StatusChecker @Inject()(http: HttpClient, appConfig: AppConfig) {
   }
 
   private def checkDesHealthcheck(appConfig: AppConfig)(implicit executionContext: ExecutionContext, futures: Futures, hc: HeaderCarrier): Future[PlatformStatus] = {
-    val requestTimestamp = Instant.now().toString
     val headers = Seq(
       "Authorization" -> s"Bearer ${appConfig.desAuthToken}",
-      "Environment" -> appConfig.desEnvironment,
-      "requestTimestamp" -> requestTimestamp
+      "Environment" -> appConfig.desEnvironment
     )
 
     http.doGet(s"${appConfig.desBaseUrl}/health-check-des", headers) map { response =>
