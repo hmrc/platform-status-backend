@@ -38,7 +38,7 @@ class MeasureController @Inject()(cc: ControllerComponents, statusChecker: Statu
     val contentLength = request.headers.get(CONTENT_LENGTH).map(_.toInt).getOrElse(-1)
 
     val testHeader = (for {
-      name <- request.headers.get("Test-Header-Name")
+      name <- request.headers.get("X-Test-Header-Name")
       testHeader <- request.headers.get(name)
       byteSize = testHeader.getBytes(StandardCharsets.UTF_8).length
     } yield s", test header '$name' length: $byteSize").getOrElse("")
