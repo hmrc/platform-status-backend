@@ -2,3 +2,5 @@
 
 GET        /status/iteration3             uk.gov.hmrc.platformstatusbackend.controllers.MongoWriteController.iteration3()
 GET        /status/iteration5             uk.gov.hmrc.platformstatusbackend.controllers.DesHealthcheckController.iteration5()
+
+POST       /measure                       uk.gov.hmrc.platformstatusbackend.controllers.MeasureController.measureRequest()
