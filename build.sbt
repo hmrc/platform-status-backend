@@ -14,3 +14,4 @@ lazy val microservice = Project(appName, file("."))
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
   .settings(resolvers += Resolver.jcenterRepo)
+  .settings(javaOptions += "-Dplay.server.akka.max-header-value-length=100m") //Setting this in application.conf doesn't seem to take effect
