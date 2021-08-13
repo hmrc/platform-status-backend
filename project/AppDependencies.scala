@@ -7,7 +7,7 @@ object AppDependencies {
 
   val compile = Seq(
 
-    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.3.0",
+    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.3.0" exclude("uk.gov.hmrc", "auth-client_2.11"),
     "org.mongodb.scala"       %% "mongo-scala-driver"       % "2.6.0"
   )
 
