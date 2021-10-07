@@ -23,9 +23,9 @@ import play.api.Logger
 import play.api.libs.concurrent.Futures
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.platformstatusbackend.services.StatusChecker
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 @Singleton()
 class MeasureController @Inject()(cc: ControllerComponents, statusChecker: StatusChecker)(implicit executionContext: ExecutionContext, futures: Futures)

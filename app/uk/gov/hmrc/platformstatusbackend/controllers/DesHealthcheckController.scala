@@ -21,9 +21,9 @@ import play.api.libs.concurrent.Futures
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.platformstatusbackend.services.StatusChecker
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 @Singleton()
 class DesHealthcheckController @Inject()(cc: ControllerComponents, statusChecker: StatusChecker)

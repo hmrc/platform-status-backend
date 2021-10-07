@@ -21,11 +21,11 @@ import play.api.libs.concurrent.Futures
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.platformstatusbackend.config.AppConfig
 import uk.gov.hmrc.platformstatusbackend.services.StatusChecker
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import play.api.libs.json.Json.toJson
 import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 @Singleton()
 class MongoWriteController @Inject()(cc: ControllerComponents, statusChecker: StatusChecker)(implicit executionContext: ExecutionContext, futures: Futures)
