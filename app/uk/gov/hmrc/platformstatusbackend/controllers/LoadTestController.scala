@@ -22,15 +22,15 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import scala.concurrent.duration.{Duration, SECONDS}
+import scala.concurrent.duration.DurationLong
 
 class LoadTestController @Inject()(cc: ControllerComponents)(implicit executionContext: ExecutionContext)
   extends BackendController(cc) {
 
 
   /* Maxes out cpu on specified number of threads for a fixed duration */
-  def cpuMax(threads: Option[Int], seconds: Long) = Action { implicit request =>
-    LoadGenerator.cpuLoad(threads.getOrElse(Runtime.getRuntime.availableProcessors()),Duration(seconds, SECONDS))
+  def cpuMax(threads: Option[Int], seconds: DurationLong) = Action { implicit request =>
+    LoadGenerator.cpuLoad(threads.getOrElse(Runtime.getRuntime.availableProcessors()), seconds.seconds)
       .fold(
         _        => ServiceUnavailable("Another test in in progress"),
         accepted => Accepted(s"Load test submitted: ${accepted.id}")

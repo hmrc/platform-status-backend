@@ -32,7 +32,7 @@ object LoadGenerator {
 
   private val logger = Logger(this.getClass)
 
-  val threadPool = new ThreadPoolExecutor(1, 16, 0L, SECONDS, new LinkedBlockingQueue[Runnable]());
+  private val threadPool = new ThreadPoolExecutor(1, 16, 0L, SECONDS, new LinkedBlockingQueue[Runnable]());
 
   sys.addShutdownHook {
     threadPool.shutdownNow()
@@ -67,16 +67,17 @@ object LoadGenerator {
     }, threadCount)
   }
 
-  private def runTest( f : (TestAccepted, Int) => Runnable, threadCount: Int ): Either[TestInProgress, TestAccepted] = {
-    if(threadPool.getActiveCount > 0) {
+  private def runTest( f : (TestAccepted, Int) => Runnable, threadCount: Int ): Either[TestInProgress, TestAccepted] = synchronized {
+    if (threadPool.getActiveCount > 0) {
       // since we're cpu bound only allow one at a time
       Left(TestInProgress())
     } else {
       threadPool.setCorePoolSize(threadCount)
       threadPool.setMaximumPoolSize(threadCount)
       val test = TestAccepted(UUID.randomUUID())
-      Range(0,threadCount).foreach(i => threadPool.submit(f(test, i) ))
+      Range(0, threadCount).foreach(i => threadPool.submit(f(test, i)))
       Right(test)
     }
   }
+
 }
