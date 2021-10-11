@@ -4,3 +4,6 @@ GET        /status/iteration3             uk.gov.hmrc.platformstatusbackend.cont
 GET        /status/iteration5             uk.gov.hmrc.platformstatusbackend.controllers.DesHealthcheckController.iteration5()
 
 POST       /measure                       uk.gov.hmrc.platformstatusbackend.controllers.MeasureController.measureRequest()
+
+POST       /load/cpu/max                  uk.gov.hmrc.platformstatusbackend.controllers.LoadTestController.cpuMax(threads: Option[Int], seconds: Long)
+POST       /load/cpu/tasks                uk.gov.hmrc.platformstatusbackend.controllers.LoadTestController.cpuTasks(threads: Option[Int], count: Int)
