@@ -47,4 +47,12 @@ class LoadTestController @Inject()(cc: ControllerComponents)(implicit executionC
       )
   }
 
+  def gc(test: String, threads: Option[Int], count: Int) = Action { implicit request =>
+    LoadGenerator.gc(test, threads.getOrElse(Runtime.getRuntime.availableProcessors()), count)
+      .fold(
+        _        => ServiceUnavailable("Another test in in progress"),
+        accepted => Accepted(s"Load test submitted: ${accepted.id}")
+      )
+  }
+
 }
