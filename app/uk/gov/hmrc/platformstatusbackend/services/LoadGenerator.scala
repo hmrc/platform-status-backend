@@ -17,7 +17,6 @@
 package uk.gov.hmrc.platformstatusbackend.services
 
 import play.api.Logger
-import uk.gov.hmrc.platformstatusbackend.services.LoadGenerator.runTest
 
 import java.util.UUID
 import java.util.concurrent.{LinkedBlockingQueue, ThreadPoolExecutor}
@@ -40,16 +39,16 @@ object LoadGenerator {
   }
 
   def cpuLoad(threadCount: Int, duration: Duration): Either[TestInProgress, TestAccepted] = {
-    runTest((testId: TestAccepted, threadId: Int) => () => {
+    runTest(threadCount) { (testId: TestAccepted, threadId: Int) => () =>
       logger.info(s"Test ${testId.id} Thread $threadId - maxing cpu for ${duration.toSeconds} seconds")
       val endAt = System.currentTimeMillis() + duration.toMillis
       while (System.currentTimeMillis() < endAt) {}
       logger.info(s"Test ${testId.id} Thread $threadId - completed maxing cpu")
-    }, threadCount)
+    }
   }
 
   def cpuTasks(threadCount: Int, tasks: Int): Either[TestInProgress, TestAccepted] = {
-    runTest((test: TestAccepted, threadId: Int) => () => {
+    runTest(threadCount) { (test: TestAccepted, threadId: Int) => () =>
 
       val start = System.currentTimeMillis()
       var max = 0
@@ -66,15 +65,14 @@ object LoadGenerator {
       }
 
       logger.info(s"Test ${test.id} Thread $threadId - complete $tasksPerThread tasks in ${System.currentTimeMillis() - start} ms")
-
-    }, threadCount)
+    }
   }
 
   def gc(name: String, threadCount: Int, tasks: Int) : Either[TestInProgress, TestAccepted] = {
     logger.debug(s"Forcing GC prior to GC Experiment $name")
     System.gc()
 
-    runTest( (test:TestAccepted, threadId: Int) => () => {
+    runTest(threadCount) { (test:TestAccepted, threadId: Int) => () =>
       logger.info(s"Test ${test.id} Thread $threadId - starting GC Experiment $name")
 
       val tasksPerThread = tasks / threadCount
@@ -94,10 +92,10 @@ object LoadGenerator {
 
       logger.info(s"Test ${test.id} Thread $threadId - completed GC Experiment $name ($tasksPerThread tasks) in ${finish - start} ms")
 
-    }, threadCount)
+    }
   }
 
-  private def runTest(f: (TestAccepted, Int) => Runnable, threadCount: Int): Either[TestInProgress, TestAccepted] = synchronized {
+  private def runTest(threadCount: Int)(f: (TestAccepted, Int) => Runnable): Either[TestInProgress, TestAccepted] = synchronized {
     if (threadPool.getActiveCount > 0) {
       // since we're cpu bound only allow one at a time
       Left(TestInProgress())
