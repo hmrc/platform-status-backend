@@ -16,15 +16,12 @@
 
 package uk.gov.hmrc.platformstatusbackend.controllers
 
-import com.sun.management.HotSpotDiagnosticMXBean
+import com.sun.management.VMOption
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import java.lang.management.ManagementFactory
 import javax.inject.{Inject, Singleton}
-import com.sun.management.VMOption
-
 import scala.collection.SortedMap
 
 @Singleton
