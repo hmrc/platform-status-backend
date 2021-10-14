@@ -10,3 +10,5 @@ POST       /measure                       uk.gov.hmrc.platformstatusbackend.cont
 POST       /load/cpu/max                  uk.gov.hmrc.platformstatusbackend.controllers.LoadTestController.cpuMax(threads: Option[Int], seconds: Long)
 POST       /load/cpu/tasks                uk.gov.hmrc.platformstatusbackend.controllers.LoadTestController.cpuTasks(threads: Option[Int], count: Int)
 POST       /load/gc/:test                 uk.gov.hmrc.platformstatusbackend.controllers.LoadTestController.gc(test: String, threads: Option[Int], count: Int)
+
+GET        /gcinfo                        uk.gov.hmrc.platformstatusbackend.controllers.GcInformationController.getGcInfo
