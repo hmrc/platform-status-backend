@@ -16,16 +16,14 @@
 
 package uk.gov.hmrc.platformstatusbackend.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.libs.concurrent.Futures
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.platformstatusbackend.config.AppConfig
-import uk.gov.hmrc.platformstatusbackend.services.StatusChecker
 import play.api.libs.json.Json.toJson
-import play.api.libs.json._
-
-import scala.concurrent.{ExecutionContext, Future}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.platformstatusbackend.services.StatusChecker
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton()
 class MongoWriteController @Inject()(cc: ControllerComponents, statusChecker: StatusChecker)(implicit executionContext: ExecutionContext, futures: Futures)

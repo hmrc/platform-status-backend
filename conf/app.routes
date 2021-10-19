@@ -4,6 +4,7 @@ GET        /status/iteration3             uk.gov.hmrc.platformstatusbackend.cont
 GET        /status/iteration5             uk.gov.hmrc.platformstatusbackend.controllers.DesHealthcheckController.iteration5()
 
 GET        /diag/vm                       uk.gov.hmrc.platformstatusbackend.controllers.PrintVmDiagnosticController.printVmOptions()
+GET        /diag/memory-pools             uk.gov.hmrc.platformstatusbackend.controllers.PrintVmDiagnosticController.getMemoryPoolInfo()
 
 POST       /measure                       uk.gov.hmrc.platformstatusbackend.controllers.MeasureController.measureRequest()
 
