@@ -21,10 +21,9 @@ import uk.gov.hmrc.platformstatusbackend.services.LoadGenerator
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationLong
 
-class LoadTestController @Inject()(cc: ControllerComponents)(implicit executionContext: ExecutionContext)
+class LoadTestController @Inject()(cc: ControllerComponents)
   extends BackendController(cc) {
 
 

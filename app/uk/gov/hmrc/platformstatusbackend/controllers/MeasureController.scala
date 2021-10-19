@@ -16,19 +16,15 @@
 
 package uk.gov.hmrc.platformstatusbackend.controllers
 
-import java.nio.charset.StandardCharsets
-
-import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.libs.concurrent.Futures
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.platformstatusbackend.services.StatusChecker
-
-import scala.concurrent.ExecutionContext
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import java.nio.charset.StandardCharsets
+import javax.inject.{Inject, Singleton}
+
 @Singleton()
-class MeasureController @Inject()(cc: ControllerComponents, statusChecker: StatusChecker)(implicit executionContext: ExecutionContext, futures: Futures)
+class MeasureController @Inject()(cc: ControllerComponents)
     extends BackendController(cc) {
 
   val logger: Logger = Logger(this.getClass)

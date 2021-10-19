@@ -23,9 +23,8 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.Inject
 import scala.collection.JavaConverters._
-import scala.concurrent.ExecutionContext
 
-class GcInformationController @Inject()(cc: ControllerComponents)(implicit executionContext: ExecutionContext)
+class GcInformationController @Inject()(cc: ControllerComponents)
   extends BackendController(cc){
 
   def getGcInfo: Action[AnyContent] = Action {

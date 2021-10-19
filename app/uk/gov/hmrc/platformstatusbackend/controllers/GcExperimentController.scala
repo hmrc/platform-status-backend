@@ -23,9 +23,8 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.util.UUID
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
-class GcExperimentController @Inject()(cc: ControllerComponents)(implicit executionContext: ExecutionContext)
+class GcExperimentController @Inject()(cc: ControllerComponents)
   extends BackendController(cc) {
 
   private val logger = Logger(this.getClass)
