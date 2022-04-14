@@ -1,18 +1,16 @@
-import play.core.PlayVersion.current
-import play.sbt.PlayImport._
-import sbt.Keys.libraryDependencies
 import sbt._
 
 object AppDependencies {
 
-  val compile = Seq(
+  private val bootstrapVersion = "5.23.0"
 
-    "uk.gov.hmrc"             %% "bootstrap-backend-play-28" % "5.14.0",
+  val compile = Seq(
+    "uk.gov.hmrc"             %% "bootstrap-backend-play-28" % bootstrapVersion,
     "org.mongodb.scala"       %% "mongo-scala-driver"        % "4.3.2"
   )
 
   val test = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-test-play-28"   % "5.14.0" % "test"
+    "uk.gov.hmrc"             %% "bootstrap-test-play-28"    % bootstrapVersion % Test
   )
 
 }
