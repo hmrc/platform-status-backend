@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ class PrintVmDiagnosticController @Inject()(cc: ControllerComponents)
     val result = getAllFlagsMethod.invoke(null)
     val flags = result.asInstanceOf[java.util.List[_]]
 
-    val vmOptions = flags.asScala.map(getVMOptionMethod.invoke(_).asInstanceOf[VMOption])
+    val vmOptions = flags.asScala.toSeq.map(getVMOptionMethod.invoke(_).asInstanceOf[VMOption])
 
     Ok(toJson(SortedMap(vmOptions.map(e => e.getName -> e.getValue):_*)))
   }
