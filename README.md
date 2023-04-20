@@ -1,7 +1,7 @@
 
 # platform-status-backend
 
-This is a placeholder README.md for a new repository
+The goal of this service is to provide transparency into the work of the team and to present platform health indicators in an easily digestible way. 
 
 ### License
 
