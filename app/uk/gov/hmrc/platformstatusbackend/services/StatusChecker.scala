@@ -36,13 +36,21 @@ class StatusChecker @Inject()(http: HttpClient, appConfig: AppConfig) {
 
   val logger = Logger(this.getClass)
 
-  val baseIteration3Status = PlatformStatus(name = "iteration 3",
-    isWorking = true,
-    description = "Call through to service in protected zone that can read/write to protected Mongo")
+  val baseIteration3Status =
+    PlatformStatus(
+      enabled = true,
+      name = "iteration 3",
+      isWorking = true,
+      description = "Call through to service in protected zone that can read/write to protected Mongo"
+    )
 
-  val baseIteration5Status = PlatformStatus(name = "iteration 5",
-    isWorking = true,
-    description = "Call through to service in protected zone that can call a HOD via DES")
+  val baseIteration5Status =
+    PlatformStatus(
+      enabled = true,
+      name = "iteration 5",
+      isWorking = true,
+      description = "Call through to service in protected zone that can call a HOD via DES"
+    )
 
 
 

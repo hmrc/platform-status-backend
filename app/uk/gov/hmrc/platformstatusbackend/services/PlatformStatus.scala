@@ -18,12 +18,13 @@ package uk.gov.hmrc.platformstatusbackend.services
 
 import play.api.libs.json.{Json, OFormat}
 
-case class PlatformStatus(name: String,
-                          isWorking: Boolean,
-                          description: String,
-                          reason: Option[String] = None) {
-
-}
+case class PlatformStatus(
+  enabled    : Boolean,
+  name       : String,
+  isWorking  : Boolean,
+  description: String,
+  reason     : Option[String] = None
+)
 
 object PlatformStatus {
   implicit val mongoFormat: OFormat[PlatformStatus] = Json.format[PlatformStatus]
