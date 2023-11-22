@@ -28,7 +28,7 @@ class LoadTestController @Inject()(cc: ControllerComponents)
 
 
   /* Maxes out cpu on specified number of threads for a fixed duration */
-  def cpuMax(threads: Option[Int], seconds: DurationLong) = Action { implicit request =>
+  def cpuMax(threads: Option[Int], seconds: DurationLong) = Action {
     LoadGenerator.cpuLoad(threads.getOrElse(Runtime.getRuntime.availableProcessors()), seconds.seconds)
       .fold(
         _        => ServiceUnavailable("Another test in in progress"),
@@ -38,7 +38,7 @@ class LoadTestController @Inject()(cc: ControllerComponents)
 
 
   /* times how long it takes to complete a number of cpu bound tasks split evenly over a specified number of threads */
-  def cpuTasks(threads: Option[Int], count: Int) = Action { implicit request =>
+  def cpuTasks(threads: Option[Int], count: Int) = Action { _ =>
     LoadGenerator.cpuTasks(threads.getOrElse(Runtime.getRuntime.availableProcessors()), count)
       .fold(
         _        => ServiceUnavailable("Another test in in progress"),
@@ -46,7 +46,7 @@ class LoadTestController @Inject()(cc: ControllerComponents)
       )
   }
 
-  def gc(test: String, threads: Option[Int], count: Int) = Action { implicit request =>
+  def gc(test: String, threads: Option[Int], count: Int) = Action { _ =>
     LoadGenerator.gc(test, threads.getOrElse(Runtime.getRuntime.availableProcessors()), count)
       .fold(
         _        => ServiceUnavailable("Another test in in progress"),
