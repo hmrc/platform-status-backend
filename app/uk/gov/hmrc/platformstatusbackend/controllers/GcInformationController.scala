@@ -22,7 +22,7 @@ import uk.gov.hmrc.platformstatusbackend.models.GcInformation
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.Inject
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class GcInformationController @Inject()(cc: ControllerComponents)
   extends BackendController(cc){

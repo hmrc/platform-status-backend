@@ -26,13 +26,14 @@ import java.lang.management.{ManagementFactory, MemoryUsage}
 import javax.inject.{Inject, Singleton}
 import scala.collection.SortedMap
 
+
 @Singleton
 class PrintVmDiagnosticController @Inject()(cc: ControllerComponents)
   extends BackendController(cc) {
 
   def printVmOptions(): Action[AnyContent] = Action { request =>
 
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
 
     val flagClass = Class.forName("sun.management.Flag")
     val getAllFlagsMethod = flagClass.getDeclaredMethod("getAllFlags")
@@ -49,12 +50,12 @@ class PrintVmDiagnosticController @Inject()(cc: ControllerComponents)
 
   def getMemoryPoolInfo(): Action[AnyContent] = Action { request =>
 
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
 
     Ok(toJson(ManagementFactory.getMemoryPoolMXBeans.asScala.map { e => e.getName ->
       GcPoolInfo(
-        e.getType.name(),
-        e.getMemoryManagerNames,
+        e.getType.name,
+        e.getMemoryManagerNames.toSeq,
         e.isValid,
         toGcPoolUsage(e.getUsage),
         toGcPoolUsage(e.getPeakUsage),

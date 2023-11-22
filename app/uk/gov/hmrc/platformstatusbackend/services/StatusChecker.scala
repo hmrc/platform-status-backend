@@ -23,7 +23,7 @@ import org.mongodb.scala.model.ReplaceOptions
 import play.api.Logger
 import play.api.libs.concurrent.Futures
 import play.api.libs.concurrent.Futures._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.platformstatusbackend.config.AppConfig
 
 import javax.inject.Singleton
@@ -66,7 +66,7 @@ class StatusChecker @Inject()(http: HttpClient, appConfig: AppConfig) {
     }
   }
 
-  def iteration5Status()(implicit executionContext: ExecutionContext, futures: Futures, hc: HeaderCarrier): Future[PlatformStatus] = {
+  def iteration5Status()(implicit executionContext: ExecutionContext, futures: Futures): Future[PlatformStatus] = {
     try {
       checkDesHealthcheck(appConfig).withTimeout(2.seconds).recoverWith {
         case ex: Exception =>
@@ -78,7 +78,7 @@ class StatusChecker @Inject()(http: HttpClient, appConfig: AppConfig) {
     }
   }
 
-  private def checkMongoConnection(dbUrl: String)(implicit executionContext: ExecutionContext, futures: Futures): Future[PlatformStatus] = {
+  private def checkMongoConnection(dbUrl: String)(implicit executionContext: ExecutionContext): Future[PlatformStatus] = {
     val mongoClient: MongoClient = MongoClient(dbUrl)
     val database: MongoDatabase = mongoClient.getDatabase("platform-status-backend")
     val collection: MongoCollection[Document] = database.getCollection("status")
@@ -91,7 +91,7 @@ class StatusChecker @Inject()(http: HttpClient, appConfig: AppConfig) {
     } yield result
   }
 
-  private def checkDesHealthcheck(appConfig: AppConfig)(implicit executionContext: ExecutionContext, futures: Futures, hc: HeaderCarrier): Future[PlatformStatus] = {
+  private def checkDesHealthcheck(appConfig: AppConfig)(implicit executionContext: ExecutionContext): Future[PlatformStatus] = {
     val headers = Seq(
       "Authorization" -> s"Bearer ${appConfig.desAuthToken}",
       "Environment" -> appConfig.desEnvironment
