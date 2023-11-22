@@ -8,9 +8,9 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     majorVersion                     := 0,
     libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
-    scalaVersion                     := "2.13.8"
+    scalaVersion                     := "2.13.12"
   )
-  .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
   .settings(resolvers += Resolver.jcenterRepo)
-  .settings(javaOptions += "-Dplay.server.akka.max-header-value-length=100m") //Setting this in application.conf doesn't seem to take effect
+  .settings(javaOptions += "-Dplay.server.akka.max-header-size=100m") //Setting this in application.conf doesn't seem to take effect
+  .settings(PlayKeys.playDefaultPort := 8463)
