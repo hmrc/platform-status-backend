@@ -18,26 +18,37 @@ package uk.gov.hmrc.platformstatusbackend.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class GcPoolUsage(init: Long, used: Long, committed: Long, max: Long)
+case class GcPoolUsage(
+  init     : Long,
+  used     : Long,
+  committed: Long,
+  max      : Long
+)
 
 object GcPoolUsage {
   implicit val formats: OFormat[GcPoolUsage] = Json.format[GcPoolUsage]
 }
 
-case class GcPoolUsageThreshold(threshold: Long, count: Long, exceeded: Boolean)
+case class GcPoolUsageThreshold(
+  threshold: Long,
+  count    : Long,
+  exceeded : Boolean
+)
 
 object GcPoolUsageThreshold {
   implicit val formats: OFormat[GcPoolUsageThreshold] = Json.format[GcPoolUsageThreshold]
 }
 
-case class GcPoolInfo(`type`: String,
-                      memoryManagerNames: Seq[String],
-                      valid: Boolean,
-                      usage: Option[GcPoolUsage],
-                      peakUsage: Option[GcPoolUsage],
-                      collectionUsage: Option[GcPoolUsage],
-                      usageThreshold: Option[GcPoolUsageThreshold],
-                      collectionUsageThreshold: Option[GcPoolUsageThreshold])
+case class GcPoolInfo(
+  `type`                  : String,
+  memoryManagerNames      : Seq[String],
+  valid                   : Boolean,
+  usage                   : Option[GcPoolUsage],
+  peakUsage               : Option[GcPoolUsage],
+  collectionUsage         : Option[GcPoolUsage],
+  usageThreshold          : Option[GcPoolUsageThreshold],
+  collectionUsageThreshold: Option[GcPoolUsageThreshold]
+)
 
 object GcPoolInfo {
   implicit val formats: OFormat[GcPoolInfo] = Json.format[GcPoolInfo]
