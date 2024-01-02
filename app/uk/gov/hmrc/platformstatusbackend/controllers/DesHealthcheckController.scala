@@ -26,12 +26,18 @@ import scala.concurrent.ExecutionContext
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 @Singleton()
-class DesHealthcheckController @Inject()(cc: ControllerComponents, statusChecker: StatusChecker)
-                                        (implicit executionContext: ExecutionContext, futures: Futures) extends BackendController(cc) {
+class DesHealthcheckController @Inject()(
+  cc: ControllerComponents,
+  statusChecker: StatusChecker
+)(implicit
+  ec: ExecutionContext,
+  futures: Futures
+) extends BackendController(cc) {
 
-  def iteration5(): Action[AnyContent] = Action.async {
-    for {
-      status <- statusChecker.iteration5Status()
-    } yield Ok(toJson(status))
-  }
+  def iteration5(): Action[AnyContent] =
+    Action.async {
+      for {
+        status <- statusChecker.iteration5Status()
+      } yield Ok(toJson(status))
+    }
 }

@@ -22,16 +22,17 @@ trait GcExperiment {
 
 object GcExperiments {
   private val experiments: Map[String, GcExperiment] = Map(
-    "small-burst-heap-allocator" -> burstHeapAllocator(4096, 1000),
-    "large-burst-heap-allocator" -> burstHeapAllocator(4096000, 10),
-    "constant-heap-memory-occupancy" -> heapMemoryBandwidthAllocator(8192000),
+    "small-burst-heap-allocator"            -> burstHeapAllocator(4096, 1000),
+    "large-burst-heap-allocator"            -> burstHeapAllocator(4096000, 10),
+    "constant-heap-memory-occupancy"        -> heapMemoryBandwidthAllocator(8192000),
     "small-heap-memory-bandwidth-allocator" -> heapMemoryBandwidthAllocator(4096),
     "large-heap-memory-bandwidth-allocator" -> heapMemoryBandwidthAllocator(4096000),
-    "small-read-barriers-looping" -> readBarriersLooping(100),
-    "large-read-barriers-looping" -> readBarriersLooping(4000)
+    "small-read-barriers-looping"           -> readBarriersLooping(100),
+    "large-read-barriers-looping"           -> readBarriersLooping(4000)
   )
 
-  def apply(name: String): GcExperiment = experiments(name)
+  def apply(name: String): GcExperiment =
+    experiments(name)
 
   private def burstHeapAllocator(sizeInBytes: Int, numberOfObjects: Int): GcExperiment =
     () => (1 to numberOfObjects).map(_ => new Array[Byte](sizeInBytes)).toList

@@ -33,28 +33,25 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StatusChecker @Inject()(http: HttpClient, appConfig: AppConfig) {
-
-  val logger = Logger(this.getClass)
+  private val logger = Logger(this.getClass)
 
   val baseIteration3Status =
     PlatformStatus(
-      enabled = true,
-      name = "iteration 3",
-      isWorking = true,
+      enabled     = true,
+      name        = "iteration 3",
+      isWorking   = true,
       description = "Call through to service in protected zone that can read/write to protected Mongo"
     )
 
   val baseIteration5Status =
     PlatformStatus(
-      enabled = true,
-      name = "iteration 5",
-      isWorking = true,
+      enabled     = true,
+      name        = "iteration 5",
+      isWorking   = true,
       description = "Call through to service in protected zone that can call a HOD via DES"
     )
 
-
-
-  def iteration3Status()(implicit executionContext: ExecutionContext, futures: Futures): Future[PlatformStatus] = {
+  def iteration3Status()(implicit ec: ExecutionContext, futures: Futures): Future[PlatformStatus] = {
     try {
       checkMongoConnection(appConfig.dbUrl).withTimeout(2.seconds).recoverWith {
         case ex: Exception =>
@@ -66,7 +63,7 @@ class StatusChecker @Inject()(http: HttpClient, appConfig: AppConfig) {
     }
   }
 
-  def iteration5Status()(implicit executionContext: ExecutionContext, futures: Futures): Future[PlatformStatus] = {
+  def iteration5Status()(implicit ec: ExecutionContext, futures: Futures): Future[PlatformStatus] = {
     try {
       checkDesHealthcheck(appConfig).withTimeout(2.seconds).recoverWith {
         case ex: Exception =>
@@ -79,25 +76,25 @@ class StatusChecker @Inject()(http: HttpClient, appConfig: AppConfig) {
   }
 
   private def checkMongoConnection(dbUrl: String)(implicit executionContext: ExecutionContext): Future[PlatformStatus] = {
-    val mongoClient: MongoClient = MongoClient(dbUrl)
-    val database: MongoDatabase = mongoClient.getDatabase("platform-status-backend")
-    val collection: MongoCollection[Document] = database.getCollection("status")
+    val collection: MongoCollection[Document] =
+      MongoClient(dbUrl).getDatabase("platform-status-backend").getCollection("status")
+
     val doc: Document = Document("_id" -> 0, "name" -> "MongoDB")
 
     for {
-      _ <- collection.replaceOne(equal(fieldName = "_id", value = 0), doc, ReplaceOptions().upsert(true)).toFuture()
-      result = baseIteration3Status
+      _      <- collection.replaceOne(equal(fieldName = "_id", value = 0), doc, ReplaceOptions().upsert(true)).toFuture()
+      result =  baseIteration3Status
       // TODO - handle error states better
     } yield result
   }
 
-  private def checkDesHealthcheck(appConfig: AppConfig)(implicit executionContext: ExecutionContext): Future[PlatformStatus] = {
+  private def checkDesHealthcheck(appConfig: AppConfig)(implicit ec: ExecutionContext): Future[PlatformStatus] = {
     val headers = Seq(
       "Authorization" -> s"Bearer ${appConfig.desAuthToken}",
-      "Environment" -> appConfig.desEnvironment
+      "Environment"   -> appConfig.desEnvironment
     )
 
-    http.doGet(s"${appConfig.desBaseUrl}/health-check-des", headers) map { response =>
+    http.doGet(s"${appConfig.desBaseUrl}/health-check-des", headers).map { response =>
       response.status match {
         case 200 =>
           logger.info("Successful DES health-check: " + response.json.toString())
@@ -113,7 +110,6 @@ class StatusChecker @Inject()(http: HttpClient, appConfig: AppConfig) {
     }
   }
 
-  private def genericError(status: PlatformStatus, ex: Exception)(implicit executionContext: ExecutionContext): Future[PlatformStatus] = {
-    Future(status.copy(isWorking = false, reason = Some(ex.getMessage)))
-  }
+  private def genericError(status: PlatformStatus, ex: Exception): Future[PlatformStatus] =
+    Future.successful(status.copy(isWorking = false, reason = Some(ex.getMessage)))
 }

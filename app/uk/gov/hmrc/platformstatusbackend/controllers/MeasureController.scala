@@ -24,33 +24,35 @@ import java.nio.charset.StandardCharsets
 import javax.inject.{Inject, Singleton}
 
 @Singleton()
-class MeasureController @Inject()(cc: ControllerComponents)
-    extends BackendController(cc) {
+class MeasureController @Inject()(
+  cc: ControllerComponents
+) extends BackendController(cc) {
+  private val logger: Logger = Logger(this.getClass)
 
-  val logger: Logger = Logger(this.getClass)
+  def measureRequest(): Action[AnyContent] =
+    Action { implicit request =>
+      val fromHost      = request.headers.get(USER_AGENT).getOrElse("?")
+      val remoteAddress = request.headers.get("Remote-Address").getOrElse("?")
+      val requestID     = request.headers.get("X-Request-ID").getOrElse("?")
+      val contentLength = request.headers.get(CONTENT_LENGTH).map(_.toInt).getOrElse(-1)
 
-  def measureRequest(): Action[AnyContent] = Action { implicit request =>
-    val fromHost = request.headers.get(USER_AGENT).getOrElse("?")
-    val remoteAddress = request.headers.get("Remote-Address").getOrElse("?")
-    val requestID = request.headers.get("X-Request-ID").getOrElse("?")
-    val contentLength = request.headers.get(CONTENT_LENGTH).map(_.toInt).getOrElse(-1)
+      val testHeader =
+        for {
+          name       <- request.headers.get("X-Test-Header-Name")
+          testHeader <- request.headers.get(name)
+          byteSize   =  testHeader.getBytes(StandardCharsets.UTF_8).length
+        } yield s"test header: '$name' had length: $byteSize"
 
-    val testHeader = (for {
-      name <- request.headers.get("X-Test-Header-Name")
-      testHeader <- request.headers.get(name)
-      byteSize = testHeader.getBytes(StandardCharsets.UTF_8).length
-    } yield s"test header: '$name' had length: $byteSize").getOrElse("")
-
-    val msg =
-      s"""Reply from platform-status-backend:
-      |
-      |received request from: $fromHost
-      |remoteAddress: $remoteAddress
-      |requestID: $requestID
-      |body length: $contentLength
-      |"""
-      .stripMargin + testHeader
-    logger.info(msg)
-    Ok(msg)
-  }
+      val msg =
+        s"""Reply from platform-status-backend:
+        |
+        |received request from: $fromHost
+        |remoteAddress: $remoteAddress
+        |requestID: $requestID
+        |body length: $contentLength
+        |"""
+        .stripMargin + testHeader.getOrElse("")
+      logger.info(msg)
+      Ok(msg)
+    }
 }
