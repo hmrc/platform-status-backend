@@ -21,20 +21,18 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.platformstatusbackend.models.GcInformation
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import java.lang.management.ManagementFactory
 import javax.inject.Inject
 import scala.jdk.CollectionConverters._
 
-class GcInformationController @Inject()(cc: ControllerComponents)
-  extends BackendController(cc){
+class GcInformationController @Inject()(
+  cc: ControllerComponents
+) extends BackendController(cc){
 
-  def getGcInfo: Action[AnyContent] = Action {
-
-    import java.lang.management.ManagementFactory
-
-    val gBeans = ManagementFactory.getGarbageCollectorMXBeans.asScala
-
-    val coreCount = Runtime.getRuntime.availableProcessors
-    Ok(toJson(GcInformation(coreCount, gBeans)))
+  def getGcInfo: Action[AnyContent] =
+    Action {
+      val gBeans    = ManagementFactory.getGarbageCollectorMXBeans.asScala
+      val coreCount = Runtime.getRuntime.availableProcessors
+      Ok(toJson(GcInformation(coreCount, gBeans)))
   }
-
 }

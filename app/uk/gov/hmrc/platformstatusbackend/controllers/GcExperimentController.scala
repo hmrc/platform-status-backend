@@ -24,22 +24,21 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import java.util.UUID
 import javax.inject.Inject
 
-class GcExperimentController @Inject()(cc: ControllerComponents)
-  extends BackendController(cc) {
-
+class GcExperimentController @Inject()(
+  cc: ControllerComponents
+) extends BackendController(cc) {
   private val logger = Logger(this.getClass)
 
-  def experiment(test: String, count: Option[Int]): Action[AnyContent] = Action { request =>
-    val id = UUID.randomUUID().toString
-    logger.info(s"Starting $test test $id")
-    val start = System.currentTimeMillis()
-    (1 to count.getOrElse(1)).foreach { _ =>
-      GcExperiments(test).iteration()
+  def experiment(test: String, count: Option[Int]): Action[AnyContent] =
+    Action { request =>
+      val id = UUID.randomUUID().toString
+      logger.info(s"Starting $test test $id")
+      val start = System.currentTimeMillis()
+      (1 to count.getOrElse(1))
+        .foreach(_ => GcExperiments(test).iteration())
+      val finish = System.currentTimeMillis()
+      val duration = finish - start
+      logger.info(s"Finished $test test $id in $duration ms")
+      Ok(s"${duration}")
     }
-    val finish = System.currentTimeMillis()
-    val duration = finish - start
-    logger.info(s"Finished $test test $id in $duration ms")
-    Ok(s"${duration}")
-  }
-
 }

@@ -26,12 +26,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton()
-class MongoWriteController @Inject()(cc: ControllerComponents, statusChecker: StatusChecker)(implicit executionContext: ExecutionContext, futures: Futures)
-    extends BackendController(cc) {
+class MongoWriteController @Inject()(
+  cc           : ControllerComponents,
+  statusChecker: StatusChecker
+)(implicit
+  ec     : ExecutionContext,
+  futures: Futures
+) extends BackendController(cc) {
 
-  def iteration3(): Action[AnyContent] = Action.async {
-    for {
-      status <- statusChecker.iteration3Status()
-    } yield Ok(toJson(status))
-  }
+  def iteration3(): Action[AnyContent] =
+    Action.async {
+      for {
+        status <- statusChecker.iteration3Status()
+      } yield Ok(toJson(status))
+    }
 }

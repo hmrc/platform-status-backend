@@ -27,8 +27,9 @@ import scala.collection.SortedMap
 import scala.jdk.CollectionConverters._
 
 @Singleton
-class PrintVmDiagnosticController @Inject()(cc: ControllerComponents)
-  extends BackendController(cc) {
+class PrintVmDiagnosticController @Inject()(
+  cc: ControllerComponents
+) extends BackendController(cc) {
 
   def printVmOptions(): Action[AnyContent] =
     Action { request =>
