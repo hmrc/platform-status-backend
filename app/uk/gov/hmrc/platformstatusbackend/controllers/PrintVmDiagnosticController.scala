@@ -29,53 +29,53 @@ import scala.jdk.CollectionConverters._
 @Singleton
 class PrintVmDiagnosticController @Inject()(
   cc: ControllerComponents
-) extends BackendController(cc) {
+) extends BackendController(cc):
 
   def printVmOptions(): Action[AnyContent] =
-    Action { request =>
+    Action:
       val hsdiag    = ManagementFactory.getPlatformMXBean(classOf[com.sun.management.HotSpotDiagnosticMXBean])
       val vmOptions = hsdiag.getDiagnosticOptions.asScala.toSeq
       Ok(toJson(SortedMap(vmOptions.map(e => e.getName -> e.getValue): _*)))
-    }
 
   def getMemoryPoolInfo(): Action[AnyContent] =
-    Action { request =>
+    Action:
       def toGcPoolUsage(usage: MemoryUsage) =
         Option(usage)
-          .map(u => GcPoolUsage(
-            init      = u.getInit,
-            used      = u.getUsed,
-            committed = u.getCommitted,
-            max       = u.getMax
-          ))
+          .map: u =>
+            GcPoolUsage(
+              init      = u.getInit,
+              used      = u.getUsed,
+              committed = u.getCommitted,
+              max       = u.getMax
+            )
 
       Ok(toJson(
-        ManagementFactory.getMemoryPoolMXBeans.asScala.map(e => e.getName ->
-          GcPoolInfo(
-            `type`                  = e.getType.name,
-            memoryManagerNames      = e.getMemoryManagerNames.toSeq,
-            valid                   = e.isValid,
-            usage                   = toGcPoolUsage(e.getUsage),
-            peakUsage               = toGcPoolUsage(e.getPeakUsage),
-            collectionUsage         = toGcPoolUsage(e.getCollectionUsage),
-            usageThreshold          = if (e.isUsageThresholdSupported)
-                                        Some(GcPoolUsageThreshold(
-                                          threshold = e.getUsageThreshold,
-                                          count     = e.getUsageThresholdCount,
-                                          exceeded  = e.isUsageThresholdExceeded
-                                        ))
-                                      else
-                                        None,
-            collectionUsageThreshold = if (e.isCollectionUsageThresholdSupported)
-                                         Some(GcPoolUsageThreshold(
-                                          threshold = e.getCollectionUsageThreshold,
-                                          count     = e.getCollectionUsageThresholdCount,
-                                          exceeded  = e.isCollectionUsageThresholdExceeded
-                                        ))
-                                       else
-                                         None
-          )
-        ).toMap
+        ManagementFactory.getMemoryPoolMXBeans.asScala
+          .map: e =>
+            e.getName ->
+              GcPoolInfo(
+                `type`                  = e.getType.name,
+                memoryManagerNames      = e.getMemoryManagerNames.toSeq,
+                valid                   = e.isValid,
+                usage                   = toGcPoolUsage(e.getUsage),
+                peakUsage               = toGcPoolUsage(e.getPeakUsage),
+                collectionUsage         = toGcPoolUsage(e.getCollectionUsage),
+                usageThreshold          = if e.isUsageThresholdSupported
+                                          then
+                                            Some(GcPoolUsageThreshold(
+                                              threshold = e.getUsageThreshold,
+                                              count     = e.getUsageThresholdCount,
+                                              exceeded  = e.isUsageThresholdExceeded
+                                            ))
+                                          else
+                                            None,
+                collectionUsageThreshold = if e.isCollectionUsageThresholdSupported then
+                                            Some(GcPoolUsageThreshold(
+                                              threshold = e.getCollectionUsageThreshold,
+                                              count     = e.getCollectionUsageThresholdCount,
+                                              exceeded  = e.isCollectionUsageThresholdExceeded
+                                            ))
+                                          else
+                                            None
+              )
       ))
-    }
-}

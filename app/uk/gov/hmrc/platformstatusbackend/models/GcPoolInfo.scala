@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.platformstatusbackend.models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, Format}
 
 case class GcPoolUsage(
   init     : Long,
@@ -25,9 +25,9 @@ case class GcPoolUsage(
   max      : Long
 )
 
-object GcPoolUsage {
-  implicit val formats: OFormat[GcPoolUsage] = Json.format[GcPoolUsage]
-}
+object GcPoolUsage:
+  given Format[GcPoolUsage] = Json.format[GcPoolUsage]
+
 
 case class GcPoolUsageThreshold(
   threshold: Long,
@@ -35,9 +35,9 @@ case class GcPoolUsageThreshold(
   exceeded : Boolean
 )
 
-object GcPoolUsageThreshold {
-  implicit val formats: OFormat[GcPoolUsageThreshold] = Json.format[GcPoolUsageThreshold]
-}
+object GcPoolUsageThreshold:
+  given Format[GcPoolUsageThreshold] = Json.format[GcPoolUsageThreshold]
+
 
 case class GcPoolInfo(
   `type`                  : String,
@@ -50,6 +50,5 @@ case class GcPoolInfo(
   collectionUsageThreshold: Option[GcPoolUsageThreshold]
 )
 
-object GcPoolInfo {
-  implicit val formats: OFormat[GcPoolInfo] = Json.format[GcPoolInfo]
-}
+object GcPoolInfo:
+  given Format[GcPoolInfo] = Json.format[GcPoolInfo]

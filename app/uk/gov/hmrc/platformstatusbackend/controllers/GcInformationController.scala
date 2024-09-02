@@ -27,12 +27,10 @@ import scala.jdk.CollectionConverters._
 
 class GcInformationController @Inject()(
   cc: ControllerComponents
-) extends BackendController(cc){
+) extends BackendController(cc):
 
   def getGcInfo: Action[AnyContent] =
-    Action {
+    Action:
       val gBeans    = ManagementFactory.getGarbageCollectorMXBeans.asScala
       val coreCount = Runtime.getRuntime.availableProcessors
       Ok(toJson(GcInformation(coreCount, gBeans)))
-  }
-}

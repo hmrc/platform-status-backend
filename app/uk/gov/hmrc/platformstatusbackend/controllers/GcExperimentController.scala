@@ -26,19 +26,17 @@ import javax.inject.Inject
 
 class GcExperimentController @Inject()(
   cc: ControllerComponents
-) extends BackendController(cc) {
+) extends BackendController(cc):
   private val logger = Logger(this.getClass)
 
-  def experiment(test: String, count: Option[Int]): Action[AnyContent] =
-    Action { request =>
+  def experiment(test: String, count: Int): Action[AnyContent] =
+    Action:
       val id = UUID.randomUUID().toString
       logger.info(s"Starting $test test $id")
       val start = System.currentTimeMillis()
-      (1 to count.getOrElse(1))
+      (1 to count)
         .foreach(_ => GcExperiments(test).iteration())
       val finish = System.currentTimeMillis()
       val duration = finish - start
       logger.info(s"Finished $test test $id in $duration ms")
       Ok(s"${duration}")
-    }
-}

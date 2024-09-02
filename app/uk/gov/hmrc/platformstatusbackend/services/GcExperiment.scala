@@ -16,20 +16,21 @@
 
 package uk.gov.hmrc.platformstatusbackend.services
 
-trait GcExperiment {
+trait GcExperiment:
   def iteration(): Any
-}
 
-object GcExperiments {
-  private val experiments: Map[String, GcExperiment] = Map(
-    "small-burst-heap-allocator"            -> burstHeapAllocator(4096, 1000),
-    "large-burst-heap-allocator"            -> burstHeapAllocator(4096000, 10),
-    "constant-heap-memory-occupancy"        -> heapMemoryBandwidthAllocator(8192000),
-    "small-heap-memory-bandwidth-allocator" -> heapMemoryBandwidthAllocator(4096),
-    "large-heap-memory-bandwidth-allocator" -> heapMemoryBandwidthAllocator(4096000),
-    "small-read-barriers-looping"           -> readBarriersLooping(100),
-    "large-read-barriers-looping"           -> readBarriersLooping(4000)
-  )
+object GcExperiments:
+
+  private val experiments: Map[String, GcExperiment] =
+    Map(
+      "small-burst-heap-allocator"            -> burstHeapAllocator(4096, 1000),
+      "large-burst-heap-allocator"            -> burstHeapAllocator(4096000, 10),
+      "constant-heap-memory-occupancy"        -> heapMemoryBandwidthAllocator(8192000),
+      "small-heap-memory-bandwidth-allocator" -> heapMemoryBandwidthAllocator(4096),
+      "large-heap-memory-bandwidth-allocator" -> heapMemoryBandwidthAllocator(4096000),
+      "small-read-barriers-looping"           -> readBarriersLooping(100),
+      "large-read-barriers-looping"           -> readBarriersLooping(4000)
+    )
 
   def apply(name: String): GcExperiment =
     experiments(name)
@@ -41,12 +42,9 @@ object GcExperiments {
     () => new Array[Byte](sizeInBytes)
 
   private def readBarriersLooping(numberOfObjects: Int): GcExperiment =
-    new GcExperiment {
+    new GcExperiment:
       private val ints = (1 to numberOfObjects).toList
-      override def iteration(): Any = {
+      override def iteration(): Any =
         var x: Int = 0
         ints.foreach(x += _)
         x
-      }
-    }
-}

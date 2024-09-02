@@ -25,34 +25,30 @@ import scala.concurrent.duration.DurationLong
 
 class LoadTestController @Inject()(
   cc: ControllerComponents
-) extends BackendController(cc) {
+) extends BackendController(cc):
 
   /* Maxes out cpu on specified number of threads for a fixed duration */
-  def cpuMax(threads: Option[Int], seconds: DurationLong) =
-    Action {
+  def cpuMax(threads: Option[Int], seconds: Long) =
+    Action:
       LoadGenerator.cpuLoad(threads.getOrElse(Runtime.getRuntime.availableProcessors()), seconds.seconds)
         .fold(
           _        => ServiceUnavailable("Another test in in progress"),
           accepted => Accepted(s"Load test submitted: ${accepted.id}")
         )
-    }
 
   /* times how long it takes to complete a number of cpu bound tasks split evenly over a specified number of threads */
   def cpuTasks(threads: Option[Int], count: Int) =
-    Action { _ =>
+    Action:
       LoadGenerator.cpuTasks(threads.getOrElse(Runtime.getRuntime.availableProcessors()), count)
         .fold(
           _        => ServiceUnavailable("Another test in in progress"),
           accepted => Accepted(s"Load test submitted: ${accepted.id}")
         )
-    }
 
   def gc(test: String, threads: Option[Int], count: Int) =
-    Action { _ =>
+    Action:
       LoadGenerator.gc(test, threads.getOrElse(Runtime.getRuntime.availableProcessors()), count)
         .fold(
           _        => ServiceUnavailable("Another test in in progress"),
           accepted => Accepted(s"Load test submitted: ${accepted.id}")
         )
-    }
-}

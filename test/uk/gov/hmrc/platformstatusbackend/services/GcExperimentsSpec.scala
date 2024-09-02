@@ -16,32 +16,29 @@
 
 package uk.gov.hmrc.platformstatusbackend.services
 
-import org.scalatest.matchers.must.Matchers
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class GcExperimentsSpec extends AnyWordSpec with Matchers {
+class GcExperimentsSpec extends AnyWordSpec with Matchers:
 
-  "GC Experiments" must {
-    "run small-burst-heap-allocator" in {
+  "GC Experiments" should:
+    "run small-burst-heap-allocator" in:
       GcExperiments("small-burst-heap-allocator").iteration()
-    }
-    "run large-burst-heap-allocator" in {
+
+    "run large-burst-heap-allocator" in:
       GcExperiments("large-burst-heap-allocator").iteration()
-    }
-    "run constant-heap-memory-occupancy" in {
+
+    "run constant-heap-memory-occupancy" in:
       GcExperiments("constant-heap-memory-occupancy").iteration()
-    }
-    "run small-heap-memory-bandwidth-allocator" in {
+
+    "run small-heap-memory-bandwidth-allocator" in:
       GcExperiments("small-heap-memory-bandwidth-allocator").iteration()
-    }
-    "run large-heap-memory-bandwidth-allocator" in {
+
+    "run large-heap-memory-bandwidth-allocator" in:
       GcExperiments("large-heap-memory-bandwidth-allocator").iteration()
-    }
-    "run small-read-barriers-looping" in {
+
+    "run small-read-barriers-looping" in:
       GcExperiments("small-read-barriers-looping").iteration()
-    }
-    "run large-read-barriers-looping" in {
+
+    "run large-read-barriers-looping" in:
       GcExperiments("large-read-barriers-looping").iteration()
-    }
-  }
-}

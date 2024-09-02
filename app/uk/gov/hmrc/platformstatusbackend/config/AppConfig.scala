@@ -16,17 +16,20 @@
 
 package uk.gov.hmrc.platformstatusbackend.config
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
-  val dbUrl = servicesConfig.getString("mongodb.uri")
+import javax.inject.{Inject, Singleton}
 
-  val desBaseUrl = servicesConfig.baseUrl("des")
-  val desAuthToken: String = config.get[String]("microservice.services.des.authorization-token")
+@Singleton
+class AppConfig @Inject()(
+  config: Configuration,
+  servicesConfig: ServicesConfig
+):
+  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
+  val graphiteHost   : String  = config.get[String]("microservice.metrics.graphite.host")
+  val dbUrl          : String  = servicesConfig.getString("mongodb.uri")
+
+  val desBaseUrl    : String = servicesConfig.baseUrl("des")
+  val desAuthToken  : String = config.get[String]("microservice.services.des.authorization-token")
   val desEnvironment: String = config.get[String]("microservice.services.des.environment")
-}
