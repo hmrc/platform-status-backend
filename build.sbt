@@ -6,7 +6,7 @@ lazy val microservice = Project("platform-status-backend", file("."))
   .settings(
     majorVersion        := 0,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    scalaVersion        := "2.13.12"
+    scalaVersion        := "3.3.3"
   )
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(PlayKeys.playDefaultPort := 8463)
