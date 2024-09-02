@@ -16,28 +16,27 @@
 
 package uk.gov.hmrc.platformstatusbackend.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.libs.concurrent.Futures
 import play.api.libs.json.Json.toJson
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, RequestHeader}
 import uk.gov.hmrc.platformstatusbackend.services.StatusChecker
-
-import scala.concurrent.ExecutionContext
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton()
 class DesHealthcheckController @Inject()(
-  cc: ControllerComponents,
+  cc           : ControllerComponents,
   statusChecker: StatusChecker
-)(implicit
-  ec: ExecutionContext,
-  futures: Futures
-) extends BackendController(cc) {
+)(using
+  ExecutionContext,
+  Futures
+) extends BackendController(cc):
 
   def iteration5(): Action[AnyContent] =
-    Action.async {
-      for {
+    Action.async: request =>
+      given RequestHeader = request
+      for
         status <- statusChecker.iteration5Status()
-      } yield Ok(toJson(status))
-    }
-}
+      yield Ok(toJson(status))

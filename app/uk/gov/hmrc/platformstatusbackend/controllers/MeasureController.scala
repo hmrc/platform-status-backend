@@ -26,22 +26,23 @@ import javax.inject.{Inject, Singleton}
 @Singleton()
 class MeasureController @Inject()(
   cc: ControllerComponents
-) extends BackendController(cc) {
+) extends BackendController(cc):
+
   private val logger: Logger = Logger(this.getClass)
 
   def measureRequest(): Action[AnyContent] =
-    Action { implicit request =>
+    Action: request =>
       val fromHost      = request.headers.get(USER_AGENT).getOrElse("?")
       val remoteAddress = request.headers.get("Remote-Address").getOrElse("?")
       val requestID     = request.headers.get("X-Request-ID").getOrElse("?")
       val contentLength = request.headers.get(CONTENT_LENGTH).map(_.toInt).getOrElse(-1)
 
       val testHeader =
-        for {
+        for
           name       <- request.headers.get("X-Test-Header-Name")
           testHeader <- request.headers.get(name)
           byteSize   =  testHeader.getBytes(StandardCharsets.UTF_8).length
-        } yield s"test header: '$name' had length: $byteSize"
+        yield s"test header: '$name' had length: $byteSize"
 
       val msg =
         s"""Reply from platform-status-backend:
@@ -51,8 +52,8 @@ class MeasureController @Inject()(
         |requestID: $requestID
         |body length: $contentLength
         |"""
-        .stripMargin + testHeader.getOrElse("")
+        .stripMargin
+          + testHeader.getOrElse("")
+
       logger.info(msg)
       Ok(msg)
-    }
-}

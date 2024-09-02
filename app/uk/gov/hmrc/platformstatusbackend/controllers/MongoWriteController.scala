@@ -29,15 +29,13 @@ import scala.concurrent.ExecutionContext
 class MongoWriteController @Inject()(
   cc           : ControllerComponents,
   statusChecker: StatusChecker
-)(implicit
-  ec     : ExecutionContext,
-  futures: Futures
-) extends BackendController(cc) {
+)(using
+  ExecutionContext,
+  Futures
+) extends BackendController(cc):
 
   def iteration3(): Action[AnyContent] =
-    Action.async {
-      for {
+    Action.async:
+      for
         status <- statusChecker.iteration3Status()
-      } yield Ok(toJson(status))
-    }
-}
+      yield Ok(toJson(status))
