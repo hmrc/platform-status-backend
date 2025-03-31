@@ -1,3 +1,5 @@
 # Add all the application routes to the app.routes file
 ->         /platform-status-backend   app.Routes
 ->         /                          health.Routes
+
+GET /admin/metrics uk.gov.hmrc.platformstatusbackend.controllers.MetricsController.metrics
