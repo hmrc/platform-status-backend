@@ -26,9 +26,11 @@ import javax.inject.Inject
 class MetricsController @Inject() (
   met: Metrics,
   controllerComponents: ControllerComponents
-) extends AbstractController(controllerComponents) {
+) extends AbstractController(controllerComponents):
 
   private val mapper: ObjectMapper = new ObjectMapper()
+
+  private val logger = play.api.Logger(getClass)
 
   def toJson(met: Metrics): String = {
     val writer: ObjectWriter = mapper.writerWithDefaultPrettyPrinter()
@@ -42,4 +44,8 @@ class MetricsController @Inject() (
       .as("application/json")
       .withHeaders("Cache-Control" -> "must-revalidate,no-cache,no-store")
   }
-}
+
+  import java.lang.management.*
+
+  val runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+  logger.info("InputArguments" + runtimeMxBean.getInputArguments())
