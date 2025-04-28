@@ -45,7 +45,9 @@ class MetricsController @Inject() (
       .withHeaders("Cache-Control" -> "must-revalidate,no-cache,no-store")
   }
 
-  import java.lang.management.*
+  //import java.lang.management.*
+  //val runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+  //logger.info("InputArguments" + runtimeMxBean.getInputArguments().toScala.filter(_.startsWith("-XX:")))
 
-  val runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-  logger.info("InputArguments" + runtimeMxBean.getInputArguments())
+  val processors = Runtime.getRuntime.availableProcessors
+  logger.info(s"Available processors: $processors")
