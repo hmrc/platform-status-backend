@@ -5,7 +5,6 @@ lazy val microservice = Project("platform-status-backend", file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     scalaVersion        := "3.3.6"
   )
-  .settings(resolvers += Resolver.jcenterRepo)
   .settings(PlayKeys.playDefaultPort := 8463)
   .settings(scalacOptions ++= Seq(
     "-Wconf:msg=unused&src=.*routes/.*:s"
