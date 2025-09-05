@@ -38,6 +38,7 @@ class StatusChecker @Inject()(
   appConfig   : AppConfig
 ):
   import uk.gov.hmrc.http.HttpReads.Implicits._
+  import StatusChecker.*
 
   private val logger = Logger(this.getClass)
 
@@ -55,6 +56,14 @@ class StatusChecker @Inject()(
       name        = "iteration 5",
       isWorking   = true,
       description = "Call through to service in protected zone that can call a HOD via DES"
+    )
+
+  val baseIteration6Status =
+    PlatformStatus(
+      enabled     = true,
+      name        = "iteration 6",
+      isWorking   = true,
+      description = "Call through to AppMesh service in protected zone that can read/write to protected Mongo"
     )
 
   def iteration3Status()(using ExecutionContext, Futures): Future[PlatformStatus] =
@@ -78,6 +87,13 @@ class StatusChecker @Inject()(
             genericError(baseIteration5Status, ex)
     catch
       case ex: Exception => genericError(baseIteration5Status, ex)
+
+  def iteration6Status()(using ExecutionContext, Futures): Future[PlatformStatus] =
+    iteration3Status().map: status =>
+      status.copy(
+        name        = baseIteration6Status.name
+      , description = baseIteration6Status.description
+     )
 
   private def checkMongoConnection(dbUrl: String)(using ExecutionContext): Future[PlatformStatus] =
     val collection: MongoCollection[Document] =
@@ -116,3 +132,17 @@ class StatusChecker @Inject()(
 
   private def genericError(status: PlatformStatus, ex: Exception): Future[PlatformStatus] =
     Future.successful(status.copy(isWorking = false, reason = Some(ex.getMessage)))
+
+object StatusChecker:
+  import play.api.libs.json.{Json, Format}
+
+  case class PlatformStatus(
+    enabled    : Boolean,
+    name       : String,
+    isWorking  : Boolean,
+    description: String,
+    reason     : Option[String] = None
+  )
+
+  object PlatformStatus:
+    given Format[PlatformStatus] = Json.format[PlatformStatus]

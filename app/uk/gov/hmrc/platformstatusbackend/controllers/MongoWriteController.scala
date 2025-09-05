@@ -39,3 +39,9 @@ class MongoWriteController @Inject()(
       for
         status <- statusChecker.iteration3Status()
       yield Ok(toJson(status))
+
+  def iteration6(): Action[AnyContent] =
+    Action.async:
+      for
+        status <- statusChecker.iteration6Status()
+      yield Ok(toJson(status))
